@@ -13,10 +13,6 @@ if coalition.size() <= 2:
   print("Exiting, Coalition size must be greater than 2")
   exit();
 
-# generate simple majority u
-E = coalition.size()
-u = coalition.majority_size()
-
 print "\nPulp List"
 print coalition._pulp_list
 
