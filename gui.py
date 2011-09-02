@@ -55,7 +55,7 @@ class Application(Frame):
     
     coalition.get_minimum_integer_solution()
     solved_results = "\n\nStatus: " + coalition._lp_status + \
-      "\nVariable Weights: " + coalition._lp_var_results + \
+      coalition._lp_var_results + \
       "\nTotal = " + str(coalition._lp_total)
     
     self._results_text.set(results + solved_results)
