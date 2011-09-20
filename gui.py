@@ -48,9 +48,10 @@ class Application(Frame):
     self._results_text.set("Computing results...")
     
     results = "Input Array: \n" + str(coalition._coalition_array) + \
+      "\n\nMWC: " + str(coalition._MWC) + \
+      "\n\nGamson Values: " + str(coalition._gamson_values) + \
       "\n\nPulp List: \n" + str(coalition._pulp_list) + \
       "\n\nTie List: " + str(coalition._tie_list) + \
-      "\n\nMWC: " + str(coalition._MWC) + \
       "\n\nRank: " + str(coalition._rank)
     
     coalition.get_minimum_integer_solution()
