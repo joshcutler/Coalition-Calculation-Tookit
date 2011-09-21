@@ -68,5 +68,5 @@ class Application(Frame):
     #   tkMessageBox.showerror("Error processing input", "There was either an error with your input or a codesplosion in MIW.  Please make that it was formatted correctly or contact josh.cutler@duke.edu")
 
 app = Application()                    
-app.master.title("Minimum Winning Coalition Solver") 
+app.master.title("Bargaining Coalition Toolkit") 
 app.mainloop()                         

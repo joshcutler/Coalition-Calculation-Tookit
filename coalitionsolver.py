@@ -199,9 +199,9 @@ class Coalition:
     #Do something
     self._gamson_values = [None]*self.size()
     #Iterate over each player
+    _mwcs = self._MWC.keys()
     for i in range(0, self.size() - 1):
       #See if they are in any MWCs
-      _mwcs = self._MWC.keys()
       smallest_mwc = ()
       for j in range(0, len(_mwcs) - 1):
         try:
@@ -211,4 +211,4 @@ class Coalition:
         except:
           continue
       if sum(smallest_mwc) > 0:
-        self._gamson_values[i] = self._coalition_array[i] / sum(smallest_mwc)
+        self._gamson_values[i] = round(float(self._coalition_array[i]) / sum(smallest_mwc), 2)
