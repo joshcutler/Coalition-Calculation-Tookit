@@ -27,6 +27,7 @@ class Coalition:
     self.generate_all_subcoalitions()
     self.generate_MWC()
     self.generate_gamson_values()
+    self.generate_banzhaf_power_indices()
     self.generate_ordinal_rank()
   
   def size(self):
@@ -128,7 +129,7 @@ class Coalition:
     #create filters for weights
     row = []
     for i in range(0, len(self._pulp_list)):
-      for j in range(0,len(self._varnames)):
+      for j in range(0, len(self._varnames)):
         row.append(-1)
       self._party_filter.append(row)
       row = []
@@ -139,7 +140,7 @@ class Coalition:
 
     row = []
     for i in range(0, len(self._tie_list)):
-      for j in range(0,len(self._varnames)):
+      for j in range(0, len(self._varnames)):
         row.append(-1)
       self._tie_filter.append(row)
       row = []
@@ -200,15 +201,42 @@ class Coalition:
     self._gamson_values = [None]*self.size()
     #Iterate over each player
     _mwcs = self._MWC.keys()
-    for i in range(0, self.size() - 1):
+    for i in range(0, self.size()):
       #See if they are in any MWCs
+      player = self._coalition_array[i]
       smallest_mwc = ()
-      for j in range(0, len(_mwcs) - 1):
+      for j in range(0, len(_mwcs)):
         try:
-          _mwcs[j].index(self._coalition_array[i])
-          if sum(smallest_mwc) == 0 or sum(smallest_mwc) > sum(mwcs[j]):
+          print "testing: " + str(_mwcs[j]) + "for: " + str(player)
+          _mwcs[j].index(player)
+          if sum(smallest_mwc) == 0 or sum(smallest_mwc) > sum(_mwcs[j]):
             smallest_mwc = _mwcs[j]
-        except:
-          continue
+        except ValueError:
+          pass
       if sum(smallest_mwc) > 0:
-        self._gamson_values[i] = round(float(self._coalition_array[i]) / sum(smallest_mwc), 2)
+        self._gamson_values[i] = round(float(player) / sum(smallest_mwc), 2)
+        
+  def generate_banzhaf_power_indices(self):
+    #get winning coalitions
+    self.generate_all_winning_coalitions()
+    #determine critical players
+    _majority_size = self.majority_size()
+    _number_of_times_critical = [0]*self.size()
+    for coal in self._winning_coalitions:
+      for player in coal:
+        if self._winning_coalitions[coal] - player < _majority_size:
+          for i in [x for x, y in enumerate(self._coalition_array) if y == player]:
+            _number_of_times_critical[i] += 1
+    #total times critical
+    _total_times_critical = float(sum(_number_of_times_critical))
+    self._banzhaf_power = [round(x / _total_times_critical, 2) for x in _number_of_times_critical]
+          
+  def generate_all_winning_coalitions(self):
+    self._winning_coalitions = {}
+    _majority_size = self.majority_size()
+    for coal in self._all_coalitions:
+      if self._all_coalitions[coal] >= _majority_size:
+        self._winning_coalitions[coal] = self._all_coalitions[coal]
+    #Add all parties (our all coalitions method does not generate this for some reason)
+    if sum(self._coalition_array) >= _majority_size:
+      self._winning_coalitions[tuple(self._coalition_array)] = sum(self._coalition_array)
