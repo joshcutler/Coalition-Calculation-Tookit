@@ -187,7 +187,7 @@ class Coalition:
 
     # Each of the variables is printed with it's resolved optimum value
     self._lp_vars = prob.variables()
-    self._lp_vars.sort()
+    self._lp_vars.sort(key=lambda var: var.name)
     self._lp_var_results = ""
     for v in self._lp_vars:
       self._lp_var_results += "\n" + str(v.name) + "=" + str(v.varValue)
@@ -195,23 +195,20 @@ class Coalition:
     # The optimised objective function value is printed to the screen
     self._lp_total = value(prob.objective)
     
-    def generate_gamson_values(self):
-      #Do something
-      self._gamson_values = [None]*self.size()
-      #Iterate over each player
-      for i in range(0, self.size() - 1):
-        #See if they are in any MWCs
-        _mwcs = self._MWC.keys()
-        smallest_mwc = ()
-        for j in range(0, len(_mwcs) - 1):
-          try:
-            _mwcs[j].index(self._coalition_array[i])
-            if sum(smallest_mwc) == 0 or sum(smallest_mwc) > sum(mwcs[j]):
-              smallest_mwc = _mwcs[j]
-          except:
-            continue
-        if sum(smallest_mwc) > 0:
-          self._gamson_values[i] = self._coalition_array[i] / sum(smallest_mwc)
-        else:
-          self._gamson_values[i] = "undefined"
-      return
+  def generate_gamson_values(self):
+    #Do something
+    self._gamson_values = [None]*self.size()
+    #Iterate over each player
+    for i in range(0, self.size() - 1):
+      #See if they are in any MWCs
+      _mwcs = self._MWC.keys()
+      smallest_mwc = ()
+      for j in range(0, len(_mwcs) - 1):
+        try:
+          _mwcs[j].index(self._coalition_array[i])
+          if sum(smallest_mwc) == 0 or sum(smallest_mwc) > sum(mwcs[j]):
+            smallest_mwc = _mwcs[j]
+        except:
+          continue
+      if sum(smallest_mwc) > 0:
+        self._gamson_values[i] = self._coalition_array[i] / sum(smallest_mwc)
