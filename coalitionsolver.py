@@ -2,6 +2,7 @@ import random
 import numpy
 import math
 import sys
+import itertools
 from pulp import *
 
 class Coalition:
@@ -222,21 +223,33 @@ class Coalition:
     #determine critical players
     _majority_size = self.majority_size()
     _number_of_times_critical = [0]*self.size()
-    for coal in self._winning_coalitions:
-      for player in coal:
-        if self._winning_coalitions[coal] - player < _majority_size:
-          for i in [x for x, y in enumerate(self._coalition_array) if y == player]:
-            _number_of_times_critical[i] += 1
+    
+    for coal_indices in self._winning_coalition_indices:
+      coal_sum = 0
+      for i in coal_indices:
+        coal_sum += self._coalition_array[i]
+      
+      for i in coal_indices:
+        if coal_sum - self._coalition_array[i] < _majority_size:
+          _number_of_times_critical[i] += 1
     #total times critical
     _total_times_critical = float(sum(_number_of_times_critical))
-    self._banzhaf_power = [round(x / _total_times_critical, 2) for x in _number_of_times_critical]
+    self._banzhaf_power = [round(x / _total_times_critical, 3) for x in _number_of_times_critical]
           
   def generate_all_winning_coalitions(self):
-    self._winning_coalitions = {}
+    self._winning_coalitions = []
+    self._winning_coalition_indices = []
     _majority_size = self.majority_size()
-    for coal in self._all_coalitions:
-      if self._all_coalitions[coal] >= _majority_size:
-        self._winning_coalitions[coal] = self._all_coalitions[coal]
-    #Add all parties (our all coalitions method does not generate this for some reason)
-    if sum(self._coalition_array) >= _majority_size:
-      self._winning_coalitions[tuple(self._coalition_array)] = sum(self._coalition_array)
+    
+    all_subsets_indices = []
+    subset_indices = range(len(self._coalition_array))
+    for i in range(len(self._coalition_array)):
+      for j in itertools.combinations(range(len(self._coalition_array)), i+1):
+        all_subsets_indices.append(j)
+    
+    for coal_indices in all_subsets_indices:
+      value = 0
+      for i in coal_indices:
+        value += self._coalition_array[i]
+      if value >= _majority_size:
+        self._winning_coalition_indices.append(coal_indices)
