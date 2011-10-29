@@ -48,11 +48,10 @@ class Application(Frame):
     self._results_text.set("Computing results...")
     
     results = "Input Array: \n" + str(coalition._coalition_array) + \
-      "\n\nAWC: " + str(coalition._winning_coalitions) + \
-      "\n\nMWC: " + str(coalition._MWC) + \
       "\n\nGamson Values: " + str(coalition._gamson_values) + \
       "\n\nBanzaf Power: " + str(coalition._banzhaf_power) + \
       "\n\nShapley Values: " + str(coalition._shapley_values) + \
+      "\n\nMWC: " + str(coalition._MWC) + \
       "\n\nPulp List: \n" + str(coalition._pulp_list) + \
       "\n\nTie List: " + str(coalition._tie_list) + \
       "\n\nRank: " + str(coalition._rank)

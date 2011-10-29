@@ -14,6 +14,7 @@ class Coalition:
     self._temp_list = []
     self._rank = []
     self._MWC = {}
+    self._shapley_values = []
 
     self._party_filter = []
     self._tie_filter = []
@@ -29,7 +30,7 @@ class Coalition:
     self.generate_MWC()
     self.generate_gamson_values()
     self.generate_banzhaf_power_indices()
-    self.generate_shapley_values()
+    #self.generate_shapley_values()
     self.generate_ordinal_rank()
   
   def size(self):
