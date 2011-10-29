@@ -48,9 +48,12 @@ class Application(Frame):
     self._results_text.set("Computing results...")
     
     results = "Input Array: \n" + str(coalition._coalition_array) + \
+      "\n\nAWC: " + str(coalition._winning_coalitions) + \
+      "\n\nMWC: " + str(coalition._MWC) + \
+      "\n\nGamson Values: " + str(coalition._gamson_values) + \
+      "\n\nBanzaf Power: " + str(coalition._banzhaf_power) + \
       "\n\nPulp List: \n" + str(coalition._pulp_list) + \
       "\n\nTie List: " + str(coalition._tie_list) + \
-      "\n\nMWC: " + str(coalition._MWC) + \
       "\n\nRank: " + str(coalition._rank)
     
     coalition.get_minimum_integer_solution()
@@ -67,5 +70,5 @@ class Application(Frame):
     #   tkMessageBox.showerror("Error processing input", "There was either an error with your input or a codesplosion in MIW.  Please make that it was formatted correctly or contact josh.cutler@duke.edu")
 
 app = Application()                    
-app.master.title("Minimum Winning Coalition Solver") 
+app.master.title("Bargaining Coalition Toolkit") 
 app.mainloop()                         
