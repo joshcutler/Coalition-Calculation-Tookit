@@ -29,6 +29,7 @@ class Coalition:
     self.generate_MWC()
     self.generate_gamson_values()
     self.generate_banzhaf_power_indices()
+    self.generate_shapley_values()
     self.generate_ordinal_rank()
   
   def size(self):
@@ -235,6 +236,42 @@ class Coalition:
     #total times critical
     _total_times_critical = float(sum(_number_of_times_critical))
     self._banzhaf_power = [round(x / _total_times_critical, 3) for x in _number_of_times_critical]
+  
+  def generate_shapley_values(self):
+    #get winning coalitions
+    self.generate_all_winning_permutations()
+    #determine critical players
+    _majority_size = self.majority_size()
+    _number_of_times_critical = [0]*self.size()
+    
+    for coal_indices in self._winning_permutation_indices:
+      coal_sum = 0
+      for i in coal_indices:
+        coal_sum += self._coalition_array[i]
+      
+      for i in coal_indices:
+        if coal_sum - self._coalition_array[i] < _majority_size:
+          _number_of_times_critical[i] += 1
+    #total times critical
+    _total_times_critical = float(sum(_number_of_times_critical))
+    self._shapley_values = [round(x / _total_times_critical, 3) for x in _number_of_times_critical]
+  
+  def generate_all_winning_permutations(self):
+    self._winning_permutation_indices = []
+    _majority_size = self.majority_size()
+    
+    all_subsets_indices = []
+    subset_indices = range(len(self._coalition_array))
+    for i in range(len(self._coalition_array)):
+      for j in itertools.permutations(range(len(self._coalition_array)), i+1):
+        all_subsets_indices.append(j)
+    
+    for coal_indices in all_subsets_indices:
+      value = 0
+      for i in coal_indices:
+        value += self._coalition_array[i]
+      if value >= _majority_size:
+        self._winning_permutation_indices.append(coal_indices)
           
   def generate_all_winning_coalitions(self):
     self._winning_coalitions = []

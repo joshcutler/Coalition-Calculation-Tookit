@@ -52,6 +52,7 @@ class Application(Frame):
       "\n\nMWC: " + str(coalition._MWC) + \
       "\n\nGamson Values: " + str(coalition._gamson_values) + \
       "\n\nBanzaf Power: " + str(coalition._banzhaf_power) + \
+      "\n\nShapley Values: " + str(coalition._shapley_values) + \
       "\n\nPulp List: \n" + str(coalition._pulp_list) + \
       "\n\nTie List: " + str(coalition._tie_list) + \
       "\n\nRank: " + str(coalition._rank)
