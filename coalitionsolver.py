@@ -238,27 +238,56 @@ class Coalition:
     self._banzhaf_power = [round(x / _total_times_critical, 3) for x in _number_of_times_critical]
   
   def generate_shapley_values(self):
-    #determine critical players
+    #61,58,51,50,40,39,34,11,7,7,4,4
+    self._number_of_times_critical = [0]*self.size()
+    _total_size = self.size()
     _majority_size = self.majority_size()
-    _number_of_times_critical = [0]*self.size()
-    _winning_permutation_indices = []
-    #Winning coalitions
-    subset_indices = range(len(self._coalition_array))
-    for i in subset_indices:
-      for j in itertools.permutations(subset_indices, i+1):
-         value = 0
-         for k in j:
-           value += self._coalition_array[k]
-         if value >= _majority_size:
-           for k in j:
-             if value - self._coalition_array[k] < _majority_size:
-               _number_of_times_critical[k] += 1
-    #total times critical
-    _total_times_critical = float(sum(_number_of_times_critical))
-    self._shapley_values = [round(x / _total_times_critical, 3) for x in _number_of_times_critical]
+    
+    self._recursively_compute_shapley_antecedents([], _majority_size)
+    
+    _total_times_critical = float(sum(self._number_of_times_critical))
+    self._shapley_values = [round(x / _total_times_critical, 3) for x in self._number_of_times_critical]  
             
+  def _recursively_compute_shapley_antecedents(self, current_precedent, threshold):
+    for member in range(len(self._coalition_array)):
+      if member in current_precedent:
+        #skip things that are already precedent
+        continue
+      else:
+        current_value = self._sum_from_indices(current_precedent)
+        if current_value + self._coalition_array[member] >= threshold:
+          times = math.factorial(len(self._coalition_array) - len(current_precedent) - 1)
+          self._number_of_times_critical[member] += times
+        else:
+          self._recursively_compute_shapley_antecedents(current_precedent + [member], threshold)
+  
+  def _sum_from_indices(self, index_array):
+    value = 0
+    for i in index_array:
+      value += self._coalition_array[i]
+    return value
+  
+  def generate_all_minimum_winning_coalitions(self):
+    self._mwc_indices = []
+    if self._winning_coalition_indices is None:
+      self.generate_all_winning_coalitions()
+    
+    _majority_size = self.majority_size()
+    for coal in self._winning_coalition_indices:
+      _is_mwc = True
+      value = 0
+      for i in coal:
+        value += self._coalition_array[i]
+      
+      for member in coal:
+        if value - self._coalition_array[i] >= _majority_size:
+          _is_mwc = False
+          break
+      
+      if _is_mwc:
+        self._mwc_indices.append(coal)
+    
   def generate_all_winning_coalitions(self):
-    self._winning_coalitions = []
     self._winning_coalition_indices = []
     _majority_size = self.majority_size()
     
@@ -274,3 +303,5 @@ class Coalition:
         value += self._coalition_array[i]
       if value >= _majority_size:
         self._winning_coalition_indices.append(coal_indices)
+        
+  
