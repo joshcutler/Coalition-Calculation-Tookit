@@ -249,6 +249,7 @@ class Coalition:
     self._shapley_values = [round(x / _total_times_critical, 3) for x in self._number_of_times_critical]  
             
   def _recursively_compute_shapley_antecedents(self, current_precedent, threshold):
+    print "Precedent: " + str(current_precedent)
     for member in range(len(self._coalition_array)):
       if member in current_precedent:
         #skip things that are already precedent
@@ -258,6 +259,7 @@ class Coalition:
         if current_value + self._coalition_array[member] >= threshold:
           times = math.factorial(len(self._coalition_array) - len(current_precedent) - 1)
           self._number_of_times_critical[member] += times
+          print " - processed " + str(member) + " added: " + str(times)
         else:
           self._recursively_compute_shapley_antecedents(current_precedent + [member], threshold)
   
